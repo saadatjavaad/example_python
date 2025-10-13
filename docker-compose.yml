@@ -1,0 +1,42 @@
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"   # دسترسی به Redis از خارج کانتینر
+    volumes:
+      - F:\Project\sejeld\data:/data  # مسیر ذخیره‌سازی داده‌ها داخل پروژه
+    command: ["redis-server", "--appendonly", "yes"] # فعال کردن persistence
+
+  postgres:
+    image: postgres:18
+    container_name: postgres_db
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge

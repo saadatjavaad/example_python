@@ -1,0 +1,6 @@
+{
+  "login": "ورود",
+  "logout": "خروج",
+  "error_invalid_credentials": "نام کاربری {username} یا رمز عبور {password} نادرست است",
+  "welcome": "خوش آمدی {0}، امروز {day} است"
+}

@@ -1,0 +1,38 @@
+{
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportUnknownArgumentType": "none",
+    "reportUnknownMemberType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownParameterType": "none"
+  },
+  "python.languageServer": "Pylance",
+  "python.analysis.extraPaths": ["${workspaceFolder}/app/"],
+  "python.autoComplete.extraPaths": ["${workspaceFolder}/app"],
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.focusAfterLaunch": true,
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "terminal.integrated.cwd": "${workspaceFolder}/",
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/app"
+  },
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}/app"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}/app"
+  },
+
+  // "pylint.enabled": true,
+  // "pylint.args": [],
+  // "pylint.cwd": [],
+  // "pylint.ignorePatterns": [],
+  // "pylint.importStrategy": "fromEnvironment",
+  // "pylint.interpreter": [],
+  // "pylint.path": [],
+  // "pylint.severity": "Error",
+
+  "cSpell.language": "fa,en",
+  "cSpell.words": ["isabstractmethod", "تاپل"]
+}

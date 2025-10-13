@@ -1,0 +1,7 @@
+[tool.ruff]
+ignore = ["E741"]
+
+[tool.aerich]
+tortoise_orm = "backbone.configs.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "./."

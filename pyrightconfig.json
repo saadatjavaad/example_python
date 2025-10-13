@@ -1,0 +1,14 @@
+// {
+//   "typeCheckingMode": "strict",
+//   "reportMissingImports": true,
+//   "reportOptionalSubscript": true,
+//   "reportOptionalMemberAccess": true,
+//   "reportGeneralTypeIssues": true,
+//   "reportUnboundVariable": true,
+//   "reportUnusedVariable": "warning",
+//   "reportUnusedImport": "warning",
+//   "reportUntypedVariable": "error",
+//   "useLibraryCodeForTypes": true,
+//   "reportMissingTypeStubs": false,
+//   "reportUnknownMemberType": "none"
+// }
