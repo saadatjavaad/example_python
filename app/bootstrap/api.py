@@ -7,6 +7,8 @@ from backbone.exceptions import (
     Exception422,
 )
 
+from backbone.middlewares.auth_middleware import AuthMiddleware
+from backbone.middlewares.header_time_middleware import HeaderTimeMiddleware
 from bootstrap import setup_app
 from routers import all_routers
 
@@ -33,8 +35,8 @@ app.add_exception_handler(BaseHttpException, Errhandler.general_error)
 app.add_exception_handler(Exception, Errhandler.general_error)
 
 # MIDDLEWARES
-# app.add_middleware(DomainRestrictionMiddleware)
-# app.add_middleware(ApplyFeatureFlagMiddleware)
+app.add_middleware(AuthMiddleware)
+app.add_middleware(HeaderTimeMiddleware)
 # app.add_middleware(AuthMiddleware)
 # app.add_middleware(AddRequestContextMiddleware)
 # app.add_middleware(InterceptResponseMiddleWare)

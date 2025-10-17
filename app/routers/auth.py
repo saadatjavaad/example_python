@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi import APIRouter
-from pydantic import Field, field_validator
+from pydantic import Field
 from backbone.adapters.sms_adapter_kavenegar import SMSAdapter
 from backbone.adapters.tortoise_adapter import TortoiseAdapter
 from backbone.configs import Configs
@@ -22,7 +22,7 @@ from backbone.adapters.auth_adapter import AuthAdapter, LoginEx
 from backbone.bases.base_request import BaseRequest, BaseResponse
 
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(prefix="/auth", tags=["Authentication", "public"])
 
 
 class OTPRequest(BaseRequest, PydanticMixinPhoneRequired):
@@ -60,7 +60,7 @@ class VerifyOTPRequest(BaseRequest, PydanticMixinPhoneRequired):
     code: int = Field(  # type: ignore
         ...,
         description="OTP CODE",
-        example=123456,
+        example="".join([str(x) for x in range(loc.get("Configs").OTP_LENGTH)]),
     )
 
 

@@ -8,15 +8,15 @@ loc = LocatorService()
 
 
 async def setup_locator():
-    loc.registerSingleton(
+    loc.registerSingleton(  #     cfg: Configs = loc.get("Configs")
         "Configs",
         lambda: cfg,
     )
-    await loc.registerSingletonAsync(
+    await loc.registerSingletonAsync(  #     tortoiseAdapter: TortoiseAdapter = loc.get("TortoiseAdapter")
         "TortoiseAdapter",
         init_tortoise,
     )
-    loc.registerSingletonLazy(
+    loc.registerSingletonLazy(  #    authAdapter: AuthAdapter = loc.get("AuthAdapter")
         "AuthAdapter",
         lambda: AuthAdapter(
             AuthAdapterConfig(
@@ -28,6 +28,6 @@ async def setup_locator():
             )
         ),
     )
-    loc.registerSingletonLazy(
+    loc.registerSingletonLazy(  #    sms: SMSAdapter = loc.get("SMSAdapter")
         "SMSAdapter", lambda: SMSAdapter(api_key=cfg.SMS_API_KEY, sender=cfg.SMS_SENDER)
     ),

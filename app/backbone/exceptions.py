@@ -76,6 +76,19 @@ class Exception401(BaseHttpException):  # Unauthorized (Unauthenticated)
         super().__init__(status_code=401, detail=detail)
 
 
+class Exception401MissingToken(BaseHttpException):  # Unauthorized (Unauthenticated)
+    def __init__(
+        self,
+        detail: str = "Invalid Authorization format OR Missing Authorization header \n  example=>{ Authorization : 'Bearer  abc123...' }",
+    ):
+        super().__init__(status_code=401, detail=detail)
+
+
+class Exception401ExpiredToken(BaseHttpException):  # Unauthorized (Unauthenticated)
+    def __init__(self, detail: str = "Expired Token"):
+        super().__init__(status_code=401, detail=detail)
+
+
 class Exception403Unauthorized(BaseHttpException):  # Forbidden (Unauthorized access)
     def __init__(self, detail: str = "Access denied"):
         super().__init__(status_code=403, detail=detail)
@@ -342,16 +355,10 @@ class Errhandler:
         """
         مدیریت سایر Exception ها و خطاهای HTTP
         """
-        # devlog(exc)  # لاگ توسعه
-        # مدیریت BaseHttpException خاص
-        if hasattr(exc, "status_code"):
-            code = getattr(exc, "status_code", 500)
-            message = getattr(exc, "detail", str(exc))
-        else:
-            code = 500
-            message = str(exc)
 
-        # بررسی هدر origin برای CORS
+        code = getattr(exc, "status_code", 500)
+        message = getattr(exc, "detail", str(exc))
+
         origin = request.headers.get("origin")
         headers = {}
         if origin:
@@ -367,27 +374,3 @@ class Errhandler:
             content={"status": "error", "message": message},
             headers=headers if headers else None,
         )
-
-
-# """
-# Custom HTTP Exceptions for API.
-
-# Usage guide for when to raise each exception:
-
-# - NotFoundException (404): When a requested resource (user, item, etc.) does not exist.
-# - AccessDeniedException (403): When the user is authenticated but does not have permission to access the resource.
-# - ForbiddenException (403): When access is forbidden for a specific scope or resource.
-# - ApiServiceException (Custom code): When an internal or external API service fails or returns an error.
-# - UnauthorizedException (403): When the user tries to access a resource without valid authorization (e.g., invalid token).
-# - UnauthenticatedException (401): When authentication is required but missing (e.g., user not logged in).
-# - ConflictException (409): When trying to create or update a resource that already exists (e.g., duplicate email).
-# - UnprocessableRequestException (422): When the request data is semantically invalid or cannot be processed.
-# - IntegrityException (400): When a database integrity error occurs (e.g., foreign key constraint violation).
-# - BadRequestException (400): When the request data is invalid, malformed, or missing required fields.
-# - ServerErrorException (500): For unexpected server-side errors.
-# - DomainRestrictedException (403): When access is restricted to a specific domain or environment.
-
-# Exception handlers:
-# - http_exception_handler: Handles known BaseHttpException types and returns a proper JSON response.
-# - general_exception_handler: Captures unexpected exceptions, reports them to Sentry, and returns a generic error message to the client.
-# """
