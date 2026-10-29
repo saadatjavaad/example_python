@@ -6,7 +6,7 @@
     "reportUnknownVariableType": "none",
     "reportUnknownParameterType": "none"
   },
-  "python.languageServer": "Pylance",
+  "python.languageServer": "None",
   "python.analysis.extraPaths": ["${workspaceFolder}/app/"],
   "python.autoComplete.extraPaths": ["${workspaceFolder}/app"],
   "python.terminal.activateEnvInCurrentTerminal": true,

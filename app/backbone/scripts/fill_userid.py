@@ -1,7 +1,7 @@
 import random
 from backbone.adapters.auth_adapter import UserAuthDataModel
 from backbone.adapters.tortoise_adapter import TortoiseAdapter
-from bootstrap.setup_locator import loc
+from bootstrap.locator import loc
 
 
 async def fill_user_ids():

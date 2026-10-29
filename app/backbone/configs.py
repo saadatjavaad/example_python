@@ -12,7 +12,7 @@ site_packages_path = sysconfig.get_path("purelib")
 class Configs(BaseSettings):
     DEBUG: bool = True
 
-    SECRET_KEY: str = "secret"
+    SECRET_KEY: str = "changeme"
     BASE_DIR: Path = BASE_DIR
     PYTHONPATH: str = f"{site_packages_path};{BASE_DIR}/app"
 
@@ -42,7 +42,7 @@ class Configs(BaseSettings):
     PASSWORD_SPECIAL_CHARACTERS: str = r"[!@#$%^&*()]"
 
     # postgres
-    POSTGRES_DRIVER: str = "postgres"
+    POSTGRES_DRIVER: str = "postgresql"
     POSTGRES_ASYNC_DRIVER: str = "postgresql+asyncpg"
     POSTGRES_SYNC_DRIVER: str = "postgresql+psycopg"
 
@@ -69,8 +69,8 @@ class Configs(BaseSettings):
 
     @property
     def POSTGRES_SYNC_URI(self) -> str:
-        """اتصال همگام به Replica"""
-        return self._build_uri(self.POSTGRES_SYNC_DRIVER, self.POSTGRES_SLAVE_HOST)
+        """اتصال همگام به Master"""
+        return self._build_uri(self.POSTGRES_SYNC_DRIVER, self.POSTGRES_HOST)
 
     @property
     def POSTGRES_ASYNC_SLAVE_URI(self) -> str:
@@ -114,6 +114,7 @@ class Configs(BaseSettings):
     KAFKA_SEND_NOTIFICATION: str = "SEND_NOTIFICATION"
 
     KAVENEGAR_ACCESS_KEY: str = ""
+    KAVENEGAR_SENDER: str = ""
 
     # rc
     RC_BASE_URL: str = "https://chat.timez.ir"
@@ -158,9 +159,7 @@ class Configs(BaseSettings):
     TOKEN_EXPIRE_MINUTES: int = 28800
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 57600
 
-    SMS_API_KEY: str = (
-        ""
-    )
+    SMS_API_KEY: str = ""
     SMS_SENDER: str = "2000660110"
 
 

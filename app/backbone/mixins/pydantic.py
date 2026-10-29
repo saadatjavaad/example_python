@@ -3,7 +3,6 @@ import re
 from typing import Any, Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
-
 # 📞 الگوها (Regex Patterns)
 
 
@@ -196,52 +195,51 @@ class PydanticMixinContact(BaseModel):
 
 class PydanticMixinTokenRequired(BaseModel):
     """
-    Base model for JWT tokens including access and refresh tokens
+    Base model for JWT tokens including access and refresh tokens.
+    Supports both raw JWT and Bearer JWT formats.
     """
 
     token: str = Field(
         ...,
-        description="JWT access token string",
-        pattern=r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$",
+        description="JWT access token string, optionally prefixed with Bearer",
+        pattern=(r"^(?:Bearer\s+)?" r"[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$"),
         json_schema_extra={
-            "example": (
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-                "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoiYWNjZXNzIn0."
-                "TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
-            ),
+            "examples": [
+                (
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                    "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoiYWNjZXNzIn0."
+                    "TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+                ),
+                (
+                    "Bearer "
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                    "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoiYWNjZXNzIn0."
+                    "TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+                ),
+            ],
         },
     )
 
     refresh_token: str = Field(
         ...,
-        description="JWT refresh token string",
-        pattern=r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$",
+        description="JWT refresh token string, optionally prefixed with Bearer",
+        pattern=(r"^(?:Bearer\s+)?" r"[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$"),
         json_schema_extra={
-            "example": (
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-                "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoicmVmcmVzaCJ9."
-                "8Vci6xB_1up3khVzKJcUSZrB1vVEt3tX9N1x3m8NzkM"
-            ),
+            "examples": [
+                (
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                    "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoicmVmcmVzaCJ9."
+                    "8Vci6xB_1up3khVzKJcUSZrB1vVEt3tX9N1x3m8NzkM"
+                ),
+                (
+                    "Bearer "
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+                    "eyJ1c2VyX2lkIjoxLCJ0eXBlIjoicmVmcmVzaCJ9."
+                    "8Vci6xB_1up3khVzKJcUSZrB1vVEt3tX9N1x3m8NzkM"
+                ),
+            ],
         },
     )
-
-    # ✅ Validate JWT format (access token)
-    @field_validator("token")
-    @classmethod
-    def validate_token_format(cls, value: str) -> str:
-        pattern = r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$"
-        if not re.match(pattern, value):
-            raise ValueError("Invalid access token format")
-        return value
-
-    # ✅ Validate JWT format (refresh token)
-    @field_validator("refresh_token")
-    @classmethod
-    def validate_refresh_token_format(cls, value: str) -> str:
-        pattern = r"^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$"
-        if not re.match(pattern, value):
-            raise ValueError("Invalid refresh token format")
-        return value
 
 
 class PydanticMixinTokenOptional(BaseModel):
@@ -339,3 +337,17 @@ class PydanticMixinOTP(BaseModel):
         if value and value < datetime.utcnow():
             raise ValueError("OTP has already expired")
         return value
+
+
+class PydanticMixinPagination(BaseModel):
+    limit: int = Field(
+        20,
+        ge=1,
+        le=100,
+        description="تعداد رکورد در هر صفحه",
+    )
+    offset: int = Field(
+        0,
+        ge=0,
+        description="تعداد رکورد رد شده از ابتدا",
+    )

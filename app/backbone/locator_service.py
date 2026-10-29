@@ -2,6 +2,10 @@ import asyncio
 from typing import Any
 
 
+def pr(v):
+    print(v + " registering ...")
+
+
 class LocatorService:
     def __init__(self):
         self._container: dict = dict()
@@ -11,6 +15,7 @@ class LocatorService:
     # ----------------------------
     def registerSingleton(self, key, build_fn):
         """ساخت Singleton در شروع برنامه"""
+        pr(key)
         instance = build_fn()
         if instance is None:
             raise Exception("not return instance")
@@ -18,6 +23,7 @@ class LocatorService:
 
     async def registerSingletonAsync(self, key, build_fn):
         """ساخت Singleton Async در شروع برنامه"""
+        pr(key)
         instance = await build_fn()
         if instance is None:
             raise Exception("not return instance")
@@ -33,6 +39,7 @@ class LocatorService:
         def wrapper():
             nonlocal instance
             if instance is None:
+                pr(key)
                 instance = build_fn()
                 if instance is None:
                     raise Exception("not return instance")
@@ -47,6 +54,7 @@ class LocatorService:
         async def wrapper():
             nonlocal instance
             if instance is None:
+                pr(key)
                 instance = await build_fn()
                 if instance is None:
                     raise Exception("not return instance")

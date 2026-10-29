@@ -1,7 +1,7 @@
 from backbone.adapters.auth_adapter import AuthAdapter, UserAuthAdapterDTO
 from backbone.adapters.tortoise_adapter import TortoiseAdapter
 from backbone.data_models.user import UserDataModel
-from bootstrap.setup_locator import loc
+from bootstrap.locator import loc
 
 
 async def user_seeders():

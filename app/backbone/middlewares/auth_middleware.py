@@ -1,37 +1,39 @@
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
-from backbone.adapters.auth_adapter import AuthAdapter, LoginEx
+from backbone.adapters.async_auth_adapter import AsyncRedisAuthAdapter
 from backbone.exceptions import (
     Exception401ExpiredToken,
     Exception401MissingToken,
 )
-from bootstrap.setup_locator import loc
+from bootstrap.locator import loc
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
+
+PUBLIC_PATH_PREFIXES = [
+    "/auth/",
+    "/docs",
+    "/files",
+]
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
-        route = request.scope.get("route")
-        if route:
-            route_tags = getattr(route, "tags", [])
-            if "public" in route_tags:
-                return await call_next(request)
+        path = request.url.path
 
-        authAdapter: AuthAdapter = loc.get("AuthAdapter")
+        if any(path.startswith(prefix) for prefix in PUBLIC_PATH_PREFIXES):
+            return await call_next(request)
+
+        asyncRedisAuthAdapter: AsyncRedisAuthAdapter = loc.get("AsyncRedisAuthAdapter")
+
         bToken = request.headers.get("authorization")
         if not bToken:
             raise Exception401MissingToken()
-        if not bToken.startswith("Bearer "):
-            raise Exception401MissingToken()
-        token = bToken.split(" ", 1)[1]
-        userOrEx = await authAdapter.get_user_by_token(token)
-        if isinstance(userOrEx, LoginEx):
+        user = await asyncRedisAuthAdapter.get_info_by_token(bToken)
+        if user is None:
             raise Exception401ExpiredToken()
 
-        request.state.token = token
-        request.state.bToken = bToken
-        request.state.user = userOrEx
+        request.state.token = user
+        request.state.user = user
 
         response: Response = await call_next(request)
 

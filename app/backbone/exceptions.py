@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from typing import Any, Optional
 from backbone.text_app.text_app import TextApp
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -334,20 +333,32 @@ class Errhandler:
 
     @staticmethod
     async def validation_error(request: Request, exc: Any) -> JSONResponse:
-        """
-        مدیریت خطاهای اعتبارسنجی (422)
-        """
-        # devlog(exc)  # اگر نیاز به لاگ دارید
-        errors = [
-            {
-                "field": ".".join([str(loc) for loc in err["loc"] if loc != "body"]),
-                "message": err["msg"],
-                "type": err["type"],
-            }
-            for err in exc.errors()
-        ]
+        errors = []
+
+        for err in exc.errors():
+            loc = err.get("loc", [])
+
+            field_parts = [str(part) for part in loc if part not in ("body",)]
+
+            field = ".".join(field_parts)
+
+            if not field:
+                field = "body"
+
+            errors.append(
+                {
+                    "field": field,
+                    "message": err["msg"],
+                    "type": err["type"],
+                }
+            )
+
         return JSONResponse(
-            status_code=422, content={"status": "error", "errors": errors}
+            status_code=422,
+            content={
+                "status": "error",
+                "errors": errors,
+            },
         )
 
     @staticmethod
@@ -356,11 +367,33 @@ class Errhandler:
         مدیریت سایر Exception ها و خطاهای HTTP
         """
 
+        # HTTP Status Code
         code = getattr(exc, "status_code", 500)
-        message = getattr(exc, "detail", str(exc))
 
+        # پیام اصلی خطا
+        message = getattr(exc, "detail", None)
+
+        # اگر detail وجود نداشت، پیام Exception را بگیر
+        if not message:
+            message = str(exc)
+
+        # اگر خطا از SQLAlchemy باشد، پیام خطای اصلی دیتابیس را هم بگیر
+        orig = getattr(exc, "orig", None)
+
+        if orig:
+            if getattr(orig, "args", None):
+                # فقط اولین پیام خطا را می‌گیریم
+                orig_message = str(orig.args[0])
+
+                # اگر پیام اصلی و پیام دیتابیس متفاوت هستند، به هم اضافه می‌کنیم
+                if orig_message not in str(message):
+                    message = f"{message} {orig_message}"
+
+        # Origin مربوط به CORS
         origin = request.headers.get("origin")
+
         headers = {}
+
         if origin:
             headers = {
                 "Access-Control-Allow-Origin": origin,
@@ -371,6 +404,9 @@ class Errhandler:
 
         return JSONResponse(
             status_code=code,
-            content={"status": "error", "message": message},
+            content={
+                "status": "error",
+                "message": str(message),
+            },
             headers=headers if headers else None,
         )
