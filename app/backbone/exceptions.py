@@ -12,7 +12,7 @@ class BaseHttpException(HTTPException):
         self,
         status_code: int,
         detail: Optional[str],
-        location: Optional[list[str]] = list(),
+        location: Optional[list[str]] = None,
     ):
         super().__init__(status_code=status_code, detail=detail)
         self.location = location
@@ -56,7 +56,7 @@ class ApiServiceException(BaseHttpException):  # Dynamic status_code
 
 # --- 4xx Client Errors ---
 class Exception400(BaseHttpException):  # Bad Request
-    def __init__(self, detail: str = "Bad request", location: list[str] = list()):
+    def __init__(self, detail: str = "Bad request", location: Optional[list[str]] = None):
         super().__init__(status_code=400, detail=detail, location=location)
 
 
@@ -139,7 +139,7 @@ class Exception415(BaseHttpException):  # Unsupported Media Type
 
 class Exception422(BaseHttpException):  # Unprocessable Entity
     def __init__(
-        self, detail: str = "Unprocessable request", location: list[str] = list()
+        self, detail: str = "Unprocessable request", location: Optional[list[str]] = None
     ):
         super().__init__(status_code=422, detail=detail, location=location)
 

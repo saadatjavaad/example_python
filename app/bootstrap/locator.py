@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
 
+import logging
+
 from backbone.adapters.async_auth_adapter import AsyncRedisAuthAdapter
 from backbone.adapters.async_redis_adapter import (
     AsyncRedisAdapter,
@@ -11,11 +13,13 @@ from backbone.configs import configs as cfg
 from backbone.db.sqlalchemy_db_based import SQLAlchemyAdapter
 from backbone.locator_service import LocatorService
 
+logger = logging.getLogger(__name__)
+
 loc = LocatorService()
 
 
 async def setup():
-    print("setup locator ....")
+    logger.info("setup locator ....")
 
     loc.registerSingleton(  #     cfg: Configs = loc.get("Configs")
         "Configs", lambda: cfg
@@ -33,11 +37,11 @@ async def setup():
         "AsyncRedisAuthAdapter",
         lambda: AsyncRedisAuthAdapter(
             redis_client=loc.get("AsyncRedisAdapter").client,
-            jwt_secret_key="YOUR_SUPER_SECRET_KEY",
-            otp_expire_seconds=3000000,
+            jwt_secret_key=loc.get("Configs").SECRET_KEY,
+            otp_expire_seconds=120,
         ),
     )
-    print(loc.get("Configs").POSTGRES_ASYNC_URI)
+    logger.info(cfg.POSTGRES_ASYNC_URI)
     loc.registerSingleton(  #     sqlAlchemyAdapter: SQLAlchemyAdapter = loc.get("SQLAlchemyAdapter")
         "SQLAlchemyAdapter",
         lambda: SQLAlchemyAdapter(

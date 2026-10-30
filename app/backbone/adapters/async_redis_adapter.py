@@ -1,8 +1,11 @@
 import asyncio
+import logging
 import pickle
 from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
 import redis.asyncio as redis
+
+logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
@@ -60,7 +63,7 @@ class AsyncRedisAdapter(Generic[T]):
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                print(f"Snapshot error: {e}")
+                logger.warning("Snapshot error: %s", e)
 
     async def close(self):
         self._stop_snapshot = True

@@ -6,7 +6,6 @@ from typing import Optional
 
 class StrHelper:
     @staticmethod
-    @staticmethod
     def to_lower(text: str) -> str:
         """تبدیل همه حروف به حروف کوچک"""
         return text.lower()

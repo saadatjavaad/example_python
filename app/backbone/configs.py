@@ -138,16 +138,10 @@ class Configs(BaseSettings):
 
     ENVIRONMENT: str | None = None
 
-    TORTOISE_DB_URL = POSTGRES_ASYNC_URI
     TORTOISE_MODELS: list[str] = [
         "backbone.adapters.auth_adapter",
         "backbone.data_models.user",
     ]
-    # @property
-    # def POSTGRES_URI(self) -> str:
-    #     return f"{self.POSTGRES_DRIVER}://\
-    #         {self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/\
-    #         {self.POSTGRES_DB}".replace(" ", "")  # fmt: skip
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
@@ -166,7 +160,8 @@ class Configs(BaseSettings):
 configs = Configs()
 
 
-TORTOISE_ORM = {
+# Tortoise ORM config — kept for potential future use alongside SQLAlchemy.
+TORTOISE_ORM: dict = {
     "connections": {
         configs.POSTGRES_DB: configs.POSTGRES_URI,
     },

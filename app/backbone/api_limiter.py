@@ -4,7 +4,7 @@ from fastapi import Request, Response
 from fastapi_limiter.depends import RateLimiter
 
 from backbone.configs import configs
-from backbone.helpers.fastapi_reaquest import RequestHelper
+from backbone.helpers.request_helper import RequestHelper
 from backbone.helpers.hash import HashHelpers
 
 

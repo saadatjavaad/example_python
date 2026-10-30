@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
@@ -7,12 +8,14 @@ from typing import Any, Dict, Optional
 import jwt
 from redis.asyncio import Redis
 
+logger = logging.getLogger(__name__)
+
 
 class AsyncRedisAuthAdapter:
     def __init__(
         self,
         redis_client: Redis,
-        jwt_secret_key: str = "YOUR_SUPER_SECRET_KEY",
+        jwt_secret_key: str = "",
         jwt_algorithm: str = "HS256",
         access_token_expire_day: int = 1,
         refresh_token_expire_days: int = 15,
@@ -154,14 +157,11 @@ class AsyncRedisAuthAdapter:
             )
 
         except jwt.ExpiredSignatureError as e:
-            print("TOKEN EXPIRED")
-            print(e)
+            logger.warning("TOKEN EXPIRED: %s", e)
             return None
 
         except jwt.InvalidTokenError as e:
-            print("INVALID TOKEN")
-            print(type(e))
-            print(e)
+            logger.warning("INVALID TOKEN: %s (%s)", e, type(e).__name__)
             return None
 
         # بررسی نوع توکن (access یا refresh)
@@ -258,14 +258,11 @@ class AsyncRedisAuthAdapter:
                 raw_token, self.jwt_secret_key, algorithms=[self.jwt_algorithm]
             )
         except jwt.ExpiredSignatureError as e:
-            print("TOKEN EXPIRED")
-            print(e)
+            logger.warning("TOKEN EXPIRED: %s", e)
             return None
 
         except jwt.InvalidTokenError as e:
-            print("INVALID TOKEN")
-            print(type(e))
-            print(e)
+            logger.warning("INVALID TOKEN: %s (%s)", e, type(e).__name__)
             return None
 
         # ۲. اطمینان از اینکه توکن ارسالی واقعاً از نوع Refresh Token است

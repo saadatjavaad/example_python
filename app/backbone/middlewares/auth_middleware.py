@@ -1,3 +1,5 @@
+import logging
+
 from backbone.adapters.async_auth_adapter import AsyncRedisAuthAdapter
 from backbone.exceptions import (
     Exception401ExpiredToken,
@@ -7,6 +9,8 @@ from bootstrap.locator import loc
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
+
+logger = logging.getLogger(__name__)
 
 PUBLIC_PATH_PREFIXES = [
     "/auth/",
@@ -25,10 +29,15 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         asyncRedisAuthAdapter: AsyncRedisAuthAdapter = loc.get("AsyncRedisAuthAdapter")
 
-        bToken = request.headers.get("authorization")
-        if not bToken:
+        auth_header = request.headers.get("authorization") or request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
             raise Exception401MissingToken()
-        user = await asyncRedisAuthAdapter.get_info_by_token(bToken)
+
+        token = auth_header[7:].strip()
+        if not token:
+            raise Exception401MissingToken()
+
+        user = await asyncRedisAuthAdapter.get_info_by_token(token)
         if user is None:
             raise Exception401ExpiredToken()
 

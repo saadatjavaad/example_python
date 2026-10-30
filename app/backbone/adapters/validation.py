@@ -8,7 +8,7 @@ class ValidationError(Exception):
 
 class Validator:
     def __init__(self):
-        self.rules: List[tuple[Callable[[Any], bool], str]] = list()
+        self.rules: List[tuple[Callable[[Any], bool], str]] = []
 
     def add_rule(self, rule: Callable[[Any], bool], message: str):
         """Add a custom rule."""

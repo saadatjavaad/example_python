@@ -1,5 +1,6 @@
 # ابتدا باید ادرس این فایل به tortoiseAdapter معرقی شود چون این مدل شخصی دارد برای ساخت جدول
 # نکته بعد اینه که ما هم میتونیم از متد های انی کلاس بصورت عادی استفاده کنیم و هم در tortoiseAdapter.transaction و در دو حالت متد ها قابل استفاده است
+import logging
 import random
 import jwt
 from enum import Enum
@@ -156,10 +157,10 @@ class AuthAdapter:
             if not user_id:
                 return LoginEx.UserNotFound
         except jwt.ExpiredSignatureError:
-            print("Refresh token expired")
+            logging.warning("Refresh token expired")
             return LoginEx.TokenExpired
         except jwt.InvalidTokenError:
-            print("Invalid refresh token")
+            logging.warning("Invalid refresh token")
             return LoginEx.TokenExpired
 
         user = await UserAuthDataModel.get_or_none(user_id=user_id)
@@ -180,10 +181,10 @@ class AuthAdapter:
             if not user_id:
                 return LoginEx.TokenExpired
         except jwt.ExpiredSignatureError:
-            print("Token expired")
+            logging.warning("Token expired")
             return LoginEx.TokenExpired
         except jwt.InvalidTokenError:
-            print("Invalid token")
+            logging.warning("Invalid token")
             return LoginEx.TokenExpired
 
         userOrEx = await self.get_user(user_id=user_id)

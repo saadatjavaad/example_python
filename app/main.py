@@ -1,15 +1,18 @@
+import logging
 import multiprocessing
 import os
 
 import uvicorn
 from backbone.configs import configs
 
+logger = logging.getLogger(__name__)
+
 
 def run_dev() -> None:
     """اجرای Uvicorn در حالت توسعه و مناسب برای Debug."""
-    print("🚀 Starting in development mode")
-    print("🐞 Debug mode: Breakpoints enabled")
-    print("📍 Server: http://127.0.0.1:8001")
+    logger.info("Starting in development mode")
+    logger.info("Debug mode: Breakpoints enabled")
+    logger.info("Server: http://127.0.0.1:8001")
 
     uvicorn.run(
         "bootstrap.api:app",
@@ -35,9 +38,9 @@ def run_prod() -> None:
         "0.0.0.0:8080",
     ]
 
-    print("🚀 Starting in production mode with Gunicorn")
-    print(f"👷 Workers: {workers}")
-    print("📍 Server: http://0.0.0.0:8080")
+    logger.info("Starting in production mode with Gunicorn")
+    logger.info("Workers: %d", workers)
+    logger.info("Server: http://0.0.0.0:8080")
 
     os.execvp("gunicorn", cmd)
 
