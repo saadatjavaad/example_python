@@ -19,6 +19,8 @@ from backbone.mixins.tortoise import (
     TortoiseMixinUserUsername,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class UserAuthDataModel(
     TortoiseMixinBase,
@@ -157,10 +159,10 @@ class AuthAdapter:
             if not user_id:
                 return LoginEx.UserNotFound
         except jwt.ExpiredSignatureError:
-            logging.warning("Refresh token expired")
+            logger.warning("Refresh token expired")
             return LoginEx.TokenExpired
         except jwt.InvalidTokenError:
-            logging.warning("Invalid refresh token")
+            logger.warning("Invalid refresh token")
             return LoginEx.TokenExpired
 
         user = await UserAuthDataModel.get_or_none(user_id=user_id)
@@ -181,10 +183,10 @@ class AuthAdapter:
             if not user_id:
                 return LoginEx.TokenExpired
         except jwt.ExpiredSignatureError:
-            logging.warning("Token expired")
+            logger.warning("Token expired")
             return LoginEx.TokenExpired
         except jwt.InvalidTokenError:
-            logging.warning("Invalid token")
+            logger.warning("Invalid token")
             return LoginEx.TokenExpired
 
         userOrEx = await self.get_user(user_id=user_id)

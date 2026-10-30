@@ -33,12 +33,16 @@ async def setup():
             )
         ).connect(),
     )
+    secret_key = loc.get("Configs").SECRET_KEY
+    if not secret_key:
+        raise ValueError("SECRET_KEY must be configured")
+
     loc.registerSingleton(  #     asyncRedisAuthAdapter: AsyncRedisAuthAdapter = loc.get("AsyncRedisAuthAdapter")
         "AsyncRedisAuthAdapter",
         lambda: AsyncRedisAuthAdapter(
             redis_client=loc.get("AsyncRedisAdapter").client,
-            jwt_secret_key=loc.get("Configs").SECRET_KEY,
-            otp_expire_seconds=120,
+            jwt_secret_key=secret_key,
+            otp_expire_seconds=cfg.OTP_EXPIRE_SECONDS,
         ),
     )
     logger.info(cfg.POSTGRES_ASYNC_URI)

@@ -15,7 +15,7 @@ class AsyncRedisAuthAdapter:
     def __init__(
         self,
         redis_client: Redis,
-        jwt_secret_key: str = "",
+        jwt_secret_key: str | None = None,
         jwt_algorithm: str = "HS256",
         access_token_expire_day: int = 1,
         refresh_token_expire_days: int = 15,

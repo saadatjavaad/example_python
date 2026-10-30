@@ -29,7 +29,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         asyncRedisAuthAdapter: AsyncRedisAuthAdapter = loc.get("AsyncRedisAuthAdapter")
 
-        auth_header = request.headers.get("authorization") or request.headers.get("Authorization")
+        auth_header = request.headers.get("authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
             raise Exception401MissingToken()
 

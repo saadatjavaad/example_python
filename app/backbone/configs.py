@@ -150,6 +150,7 @@ class Configs(BaseSettings):
 
     OTP_LENGTH: int = 6
     OTP_EXPIRE_MINUTES: int = 5
+    OTP_EXPIRE_SECONDS: int = 120
     TOKEN_EXPIRE_MINUTES: int = 28800
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 57600
 
